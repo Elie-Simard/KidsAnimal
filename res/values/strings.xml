@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">animauxLabo2Elie</string>
+
+    <!-- Labels for animal attributes -->
+    <string name="id_label">ID :</string>
+    <string name="nom_label">Nom :</string>
+    <string name="classe_label">Classe :</string>
+    <string name="longevite_label">Longevité :</string>
+    <string name="habitat_label">Habitat :</string>
+    <string name="fait_label">Fait :</string>
+
+    <!--    Titre des bouttons de navigation-->
+    <string name="lister_tous_les_animaux">List all</string>
+    <string name="lister_animaux_par_nom">List by name</string>
+    <string name="ajouter_un_nouvel_animal">Add new animal</string>
+    <string name="supprimer_un_animal">Delete animal</string>
+    <string name="action_settings">Paramètres</string>
+
+
+    <!--    ActionBarDrawerToggle-->
+    <string name="open">True</string>
+    <string name="close">False</string>
+
+    <!--    Boutton retour pour ListerActivity-->
+    <string name="boutton_retour">Retour</string>
+</resources>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+
+    >
+
+
+    <item
+        android:id="@+id/nav_lister_animaux"
+        android:icon="@drawable/list_all"
+        android:title="@string/lister_tous_les_animaux" />
+    <item
+        android:id="@+id/nav_lister_par_nom"
+        android:icon="@drawable/lions"
+        android:title="@string/lister_animaux_par_nom" />
+    <item
+        android:id="@+id/nav_ajouter_animal"
+        android:icon="@drawable/add"
+        android:title="@string/ajouter_un_nouvel_animal" />
+    <item
+        android:id="@+id/nav_supprimer_animal"
+        android:icon="@drawable/delete"
+        android:title="@string/supprimer_un_animal" />
+</menu>
