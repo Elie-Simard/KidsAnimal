@@ -1,34 +1,15 @@
-id;nom;classe;longevite;habitat;fait
-110;Lion;Mammifères;14;Savane;Les lions sont les seuls félins qui vivent en groupes appelés troupes.
-100;Perroquet;Oiseaux;50;Forêts tropicales;Les perroquets sont capables d'imiter les sons humains.
-200;Tortue géante;Reptiles;100;Îles;Certaines tortues géantes peuvent peser jusqu'à 400 kg.
-230;Grenouille venimeuse;Amphibiens;10;Forêts tropicales;Leur peau produit un poison puissant.
-330;Requin blanc;Poissons;70;Océans;Les requins blancs sont au sommet de la chaîne alimentaire marine.
-340;Éléphant d'Afrique;Mammifères;70;Savane;Les éléphants ont une mémoire exceptionnelle.
-400;Aigle royal;Oiseaux;30;Montagnes;Ils peuvent atteindre une vitesse de 240 km/h en piqué.
-235;Serpent boa;Reptiles;30;Forêts tropicales;Les boas étranglent leurs proies pour les tuer.
-400;Salamandre;Amphibiens;20;Zones humides;Certaines salamandres peuvent régénérer des parties de leur corps.
-450;Carpe koi;Poissons;35;Étangs;Les carpes koi sont un symbole de chance et de prospérité.
-480;Panda géant;Mammifères;20;Forêts de bambous;Les pandas géants se nourrissent presque exclusivement de bambou.
-402;Pingouin empereur;Oiseaux;20;Antarctique;Les pingouins empereurs peuvent plonger jusqu'à 500 mètres de profondeur.
-500;Crocodile du Nil;Reptiles;45;Rivières;Les crocodiles du Nil sont parmi les plus grands reptiles du monde.
-501;Axolotl;Amphibiens;15;Lacs;Les axolotls peuvent régénérer des membres perdus.
-504;Dauphin;Mammifères;40;Océans;Les dauphins utilisent l'écholocation pour trouver leur nourriture.
-275;Hibou grand-duc;Oiseaux;25;Forêts;Les hiboux grand-duc n'ont pas de véritables oreilles.
-290;Iguane vert;Reptiles;20;Forêts tropicales;Les iguanes verts peuvent survivre à des chutes de plus de 15 mètres.
-305;Triton;Amphibiens;12;Eaux douces;Les tritons retournent à l'eau pour se reproduire.
-876;Murène;Poissons;30;Récifs coralliens;Les murènes ont deux ensembles de mâchoires.
-120;Gorille de montagne;Mammifères;35;Forêts de montagne;Les gorilles de montagne sont des animaux très sociaux.
-222;Colibri;Oiseaux;5;Forêts tropicales;Les colibris sont les seuls oiseaux capables de voler en arrière.
-150;Varan;Reptiles;20;Forêts tropicales;Les varans sont parmi les plus grands lézards au monde.
-380;Grenouille arboricole;Amphibiens;5;Forêts humides;Les grenouilles arboricoles passent la majorité de leur vie dans les arbres.
-333;Baleine bleue;Mammifères;90;Océans;La baleine bleue est le plus grand animal vivant sur Terre.
-111;Faucon pèlerin;Oiseaux;15;Divers habitats;Le faucon pèlerin est l'oiseau le plus rapide du monde en piqué.
-101;Caméléon;Reptiles;5;Forêts tropicales;Les caméléons peuvent changer de couleur pour communiquer ou réguler leur température.
-220;Crapaud commun;Amphibiens;10;Jardins, forêts;Les crapauds ont une peau qui sécrète des substances pour se protéger des prédateurs.
-908;Thon rouge;Poissons;40;Océan ouvert;Le thon rouge peut nager à des vitesses dépassant les 70 km/h.
-444;Orang-outan;Mammifères;30;Forêts tropicales;Les orangs-outans sont extrêmement intelligents et capables d'utiliser des outils.
-377;Mouette rieuse;Oiseaux;15;Côtes, lacs, villes;Les mouettes peuvent boire de l'eau de mer grâce à des glandes spécialisées qui filtrent le sel.
-121;Python royal;Reptiles;20;Savanes, forêts;Les pythons royaux sont connus pour leur nature docile et sont souvent des animaux de compagnie.
-955;Grenouille de verre;Amphibiens;10;Forêts tropicales;La peau transparente de la grenouille de verre permet de voir ses organes internes.
-604;Poisson-clown;Poissons;6;Récifs coralliens;Les poissons-clowns vivent en symbiose avec les anémones de mer.
+Le dernier empereur;FR;4
+Ere de glace;FR;5
+ET;AN;5
+Maman j'ai ratÃ© l'avion;FR;3
+Le sixiÃ¨me sens;FR;5
+Les uns les autres;FR;4
+Nouvelle France;FR;3
+Et si c'Ã©tait vrai...;FR;3
+Ma vie en kalÃ©idoscope;FR;2
+Mystic river;AN;5
+La petite sirÃ©ne;FR;2
+Da Vinci Code;AN;4
+La grande sÃ©duction;FR;3
+Monsters;AN;1
+Un flic Ã  la maternelle;FR;1

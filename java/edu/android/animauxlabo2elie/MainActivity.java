@@ -1,25 +1,25 @@
 package edu.android.animauxlabo2elie;
 
-import android.content.Intent;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.view.MenuItem;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.ArrayAdapter;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import edu.android.animauxlabo2elie.model.Animal;
 import com.google.android.material.navigation.NavigationView;
 
 import java.io.BufferedReader;
@@ -27,214 +27,228 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-/* La logique de l'application est la suivante --->
-
-	1. Chargement des animaux au démarrage à partir du fichier "animals.txt".
-	2. Initialisation du RecyclerView avec les animaux chargés.
-	3. Rafraîchissement du RecyclerView lors de la sélection "Lister Animaux" dans le menu.
-	4. Boîte de dialogue pour sélectionner un nom d'animal lors de la sélection "Lister par Nom" dans le menu.
-	5. Boîte de dialogue pour ajouter un animal lors de la sélection "Ajouter Animal" dans le menu.
-	6. Boîte de dialogue pour supprimer un animal lors de la sélection "Supprimer Animal" dans le menu.
-	7. Lancement d'une nouvelle activité pour afficher les informations de l'animal sélectionné lors de la confirmation dans la boîte de dialogue "Lister par Nom".
-	8. Ajout d'un nouvel animal à la liste et rafraîchissement du RecyclerView lors de la confirmation dans la boîte de dialogue "Ajouter Animal".
-	9. Suppression de l'animal sélectionné de la liste et rafraîchissement du RecyclerView lors de la confirmation dans la boîte de dialogue "Supprimer Animal".
-	10. Fermeture de la boîte de dialogue lors de l'annulation.
-	11. Ouverture ou fermeture du menu de navigation lors du clic sur le bouton de navigation.
-	12. Affichage du fragment correspondant à la sélection dans le menu de navigation.
-	13. Fermeture du menu de navigation après la sélection.
-	14. Affichage du bon fragment lors de la sélection dans le menu de navigation.
- */
+import edu.android.animauxlabo2elie.model.Film;
 
 public class MainActivity extends AppCompatActivity {
-    private ActionBarDrawerToggle actionBarDrawerToggle;
-    private ArrayList<Animal> animalList;
+    private ArrayList<Film> filmList;
+    private MyDatabaseHelper dbHelper;
+    private DrawerLayout drawerLayout;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) { //onCreate est appelé lors de la création de l'activité, elle initialise toutes les variables et les vues
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        animalList = new ArrayList<>();
+        filmList = new ArrayList<>();
+        dbHelper = new MyDatabaseHelper(this);
+        loadFilmsFromDatabase();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
-        //Boutons de navigation(les 3 barres horizontales)
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close); //crée un bouton de navigation
-        drawerLayout.addDrawerListener(actionBarDrawerToggle); //ajoute un écouteur pour écouter les événements de navigation
-        actionBarDrawerToggle.syncState(); //synchronise l'état du bouton de navigation avec le menu de navigation
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true); //affiche le bouton de navigation
-
-        navigationView.setNavigationItemSelectedListener(item -> { //écouteur pour écouter les événements de sélection dans le menu de navigation
+        navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
 
-            if (id == R.id.nav_lister_animaux) {
-                refreshRecyclerView(animalList);
-            } else if (id == R.id.nav_lister_par_nom) {
-                AlertDialog.Builder builder = createListByNameDialog();
+            if (id == R.id.nav_lister_films) {
+                refreshRecyclerView();
+            } else if (id == R.id.nav_ajouter_film) {
+                AlertDialog.Builder builder = createAddFilmDialog();
                 builder.show();
-            } else if (id == R.id.nav_ajouter_animal) {
-                AlertDialog.Builder builder = createAddAnimalDialog();
-                builder.show();
-            } else if (id == R.id.nav_supprimer_animal) {
-                AlertDialog.Builder builder = createDeleteAnimalDialog();
+            } else if (id == R.id.nav_supprimer_film) {
+                AlertDialog.Builder builder = createDeleteFilmDialog();
                 builder.show();
             }
 
-            DrawerLayout drawer = findViewById(R.id.drawer_layout); //récupère le menu de navigation
-            drawer.closeDrawer(GravityCompat.START); //ferme le menu de navigation
+            drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
 
-        loadAnimalsFromFile();
-
-        //Affichage de la liste
-        RecyclerView recyclerView = findViewById(R.id.recyclerView); //RecyclerView est un conteneur pour afficher une liste de données, il est plus efficace que ListView car il recycle les vues, recycler les vues signifie qu'il réutilise les vues qui ne sont plus visibles pour afficher de nouvelles données
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        AnimalAdapter adapter = new AnimalAdapter(animalList);
+        FilmAdapter adapter = new FilmAdapter(filmList);
         recyclerView.setAdapter(adapter);
     }
 
-    private void loadAnimalsFromFile() {
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets().open("animaux.txt"))); //getAssets() ouvre un fichier dans le dossier assets
+    private void loadFilmsFromDatabase() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-            reader.readLine();
+        Cursor cursor = db.query(
+                MyDatabaseContract.FilmEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
 
-            String[] data;
-            String line = reader.readLine();
-            while (line != null) { //BOUCLE
-                data = line.split(";");
-                animalList.add(new Animal(Integer.parseInt(data[0]), data[1], data[2], Integer.parseInt(data[3]), data[4], data[5]));
-                line = reader.readLine();
+        if (cursor.getCount() == 0) {
+            Toast.makeText(this, "No films found in the database.", Toast.LENGTH_SHORT).show();
+            loadFilmsFromFileToDb(db);
+        } else {
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow(MyDatabaseContract.FilmEntry.COLUMN_ID));
+                String titre = cursor.getString(cursor.getColumnIndexOrThrow(MyDatabaseContract.FilmEntry.COLUMN_TITRE));
+                String langue = cursor.getString(cursor.getColumnIndexOrThrow(MyDatabaseContract.FilmEntry.COLUMN_LANGUE));
+                int etoiles = cursor.getInt(cursor.getColumnIndexOrThrow(MyDatabaseContract.FilmEntry.COLUMN_ETOILES));
+
+                filmList.add(new Film(id, titre, langue, etoiles));
             }
-            reader.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        }
+
+        cursor.close();
+    }
+
+    private void loadFilmsFromFileToDb(SQLiteDatabase db) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets().open("animaux.txt"), "UTF-8"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(";");
+                if (data.length >= 3) {
+                    String titre = data[0].trim();
+                    String langue = data[1].trim();
+                    int etoiles = Integer.parseInt(data[2].trim());
+
+                    ContentValues values = new ContentValues();
+                    values.put(MyDatabaseContract.FilmEntry.COLUMN_TITRE, titre);
+                    values.put(MyDatabaseContract.FilmEntry.COLUMN_LANGUE, langue);
+                    values.put(MyDatabaseContract.FilmEntry.COLUMN_ETOILES, etoiles);
+
+                    long newRowId = db.insertWithOnConflict(
+                            MyDatabaseContract.FilmEntry.TABLE_NAME,
+                            null,
+                            values,
+                            SQLiteDatabase.CONFLICT_REPLACE
+                    );
+                    if (newRowId != -1) {
+                        Log.d("DB_INSERT", "Film inserted/updated: " + titre);
+                    } else {
+                        Log.d("DB_INSERT", "Error inserting/updating film: " + titre);
+                    }
+                }
+            }
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error loading films from file.", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void refreshRecyclerView(ArrayList<Animal> animalList) {
-        RecyclerView recyclerView = findViewById(R.id.recyclerView); //récupère l'ancien RecyclerView
-        recyclerView.setLayoutManager(new LinearLayoutManager(this)); //crée un nouveau RecyclerView
-        //un adapteur est un pont entre une vue et des données, il fournit des données à une vue et gère la création de vues pour chaque élément de données
-        AnimalAdapter adapter = new AnimalAdapter(animalList); //crée un nouvel adaptateur avec la nouvelle liste d'animaux
+    private void refreshRecyclerView() {
+        filmList.clear();
+        loadFilmsFromDatabase();
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        FilmAdapter adapter = new FilmAdapter(filmList);
         recyclerView.setAdapter(adapter);
     }
 
     @NonNull
-    private AlertDialog.Builder createDeleteAnimalDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this); //MainActivity.this est une référence à l'activité actuelle, on l'appellera quand on voudra créer une boîte de dialogue
-        builder.setTitle("Delete Animal");
+    private AlertDialog.Builder createDeleteFilmDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Delete Film");
 
-        EditText animalID = new EditText(MainActivity.this);
-        animalID.setHint("ID");
-        builder.setView(animalID);
+        EditText filmID = new EditText(MainActivity.this);
+        filmID.setHint("ID");
+        builder.setView(filmID);
 
         builder.setPositiveButton("Delete", (dialog, which) -> {
-            int idAnimal = Integer.parseInt(animalID.getText().toString());
-            animalList.removeIf(animal -> animal.getId() == idAnimal);
-            refreshRecyclerView(animalList);
-
-            Toast.makeText(MainActivity.this, "Animal deleted", Toast.LENGTH_SHORT).show();
+            int idFilm = Integer.parseInt(filmID.getText().toString());
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            String selection = MyDatabaseContract.FilmEntry.COLUMN_ID + " = ?";
+            String[] selectionArgs = {String.valueOf(idFilm)};
+            db.delete(MyDatabaseContract.FilmEntry.TABLE_NAME, selection, selectionArgs);
+            refreshRecyclerView();
         });
 
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         return builder;
     }
 
     @NonNull
-    private AlertDialog.Builder createAddAnimalDialog() {
+    private AlertDialog.Builder createAddFilmDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("Add Animal");
+        builder.setTitle("Add Film");
 
-        LinearLayout formLayout = new LinearLayout(MainActivity.this);
-        formLayout.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout layout = new LinearLayout(MainActivity.this);
+        layout.setOrientation(LinearLayout.VERTICAL);
 
-        EditText animalID = new EditText(MainActivity.this);
-        animalID.setHint("ID");
-        formLayout.addView(animalID);
+        EditText filmTitle = new EditText(MainActivity.this);
+        filmTitle.setHint("Title");
+        layout.addView(filmTitle);
 
-        EditText animalName = new EditText(MainActivity.this);
-        animalName.setHint("Name");
-        formLayout.addView(animalName);
+        EditText filmLangue = new EditText(MainActivity.this);
+        filmLangue.setHint("Language");
+        layout.addView(filmLangue);
 
-        EditText animalClass = new EditText(MainActivity.this);
-        animalClass.setHint("Class");
-        formLayout.addView(animalClass);
+        EditText filmEtoiles = new EditText(MainActivity.this);
+        filmEtoiles.setHint("Stars");
+        layout.addView(filmEtoiles);
 
-        EditText animalLifespan = new EditText(MainActivity.this);
-        animalLifespan.setHint("Lifespan");
-        formLayout.addView(animalLifespan);
-
-        EditText animalHabitat = new EditText(MainActivity.this);
-        animalHabitat.setHint("Habitat");
-        formLayout.addView(animalHabitat);
-
-        EditText animalFact = new EditText(MainActivity.this);
-        animalFact.setHint("Fact");
-        formLayout.addView(animalFact);
-
-        builder.setView(formLayout);
+        builder.setView(layout);
 
         builder.setPositiveButton("Add", (dialog, which) -> {
-            animalList.add(new Animal(Integer.parseInt(animalID.getText().toString()), animalName.getText().toString(), animalClass.getText().toString(), Integer.parseInt(animalLifespan.getText().toString()), animalHabitat.getText().toString(), animalFact.getText().toString()));
-            refreshRecyclerView(animalList);
+            String titreFilm = filmTitle.getText().toString();
+            String langueFilm = filmLangue.getText().toString();
+            int etoilesFilm = Integer.parseInt(filmEtoiles.getText().toString());
 
-
-            Toast.makeText(MainActivity.this, "Animal added", Toast.LENGTH_SHORT).show();
-            refreshRecyclerView(animalList);
+            dbHelper.insertFilmIfNotExists(titreFilm, langueFilm, etoilesFilm);
+            refreshRecyclerView();
         });
 
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         return builder;
     }
 
     @NonNull
-    private AlertDialog.Builder createListByNameDialog() {
+    private AlertDialog.Builder createListByLangueDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("Enter Animal Name");
+        builder.setTitle("List by Language");
 
-        Spinner spinner = new Spinner(MainActivity.this);
-        String[] animalNames = getAnimalNames();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_spinner_item, animalNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+        LinearLayout layout = new LinearLayout(MainActivity.this);
+        layout.setOrientation(LinearLayout.VERTICAL);
 
-        builder.setView(spinner);
+        EditText filmLangue = new EditText(MainActivity.this);
+        filmLangue.setHint("Language");
+        layout.addView(filmLangue);
 
-        builder.setPositiveButton("OK", (dialog, which) -> {
-            String selectedAnimalName = spinner.getSelectedItem().toString();
+        builder.setView(layout);
 
-            if (!selectedAnimalName.isEmpty()) {
-                Intent intent = new Intent(MainActivity.this, ListerActivity.class);
-                intent.putExtra("animalName", selectedAnimalName);
-                startActivity(intent);
-            } else {
-                Toast.makeText(MainActivity.this, "Please select an animal name", Toast.LENGTH_SHORT).show();
+        builder.setPositiveButton("List", (dialog, which) -> {
+            String langueFilm = filmLangue.getText().toString();
+
+            filmList.clear();
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            String[] columns = {"id", "titre", "langue", "etoiles"};
+            String selection = "langue = ?";
+            String[] selectionArgs = {langueFilm};
+
+            Cursor cursor = db.query("films", columns, selection, selectionArgs, null, null, null);
+
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+                String titre = cursor.getString(cursor.getColumnIndexOrThrow("titre"));
+                String langue = cursor.getString(cursor.getColumnIndexOrThrow("langue"));
+                int etoiles = cursor.getInt(cursor.getColumnIndexOrThrow("etoiles"));
+
+                filmList.add(new Film(id, titre, langue, etoiles));
             }
+            cursor.close();
+
+            RecyclerView recyclerView = findViewById(R.id.recyclerView);
+            FilmAdapter adapter = new FilmAdapter(filmList);
+            recyclerView.setAdapter(adapter);
         });
 
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         return builder;
-    }
-
-
-    private String[] getAnimalNames() {
-        return animalList.stream()
-                .map(Animal::getNom)
-                .toArray(String[]::new);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

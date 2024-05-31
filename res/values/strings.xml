@@ -1,26 +1,29 @@
 <resources>
     <string name="app_name">animauxLabo2Elie</string>
 
-    <!-- Labels for animal attributes -->
+    <!-- Labels for film attributes -->
     <string name="id_label">ID :</string>
-    <string name="nom_label">Nom :</string>
-    <string name="classe_label">Classe :</string>
-    <string name="longevite_label">Longevité :</string>
-    <string name="habitat_label">Habitat :</string>
-    <string name="fait_label">Fait :</string>
+    <string name="titre_label">Titre :</string>
+    <string name="langue_label">Langue :</string>
+    <string name="etoiles_label">Étoiles :</string>
 
-    <!--    Titre des bouttons de navigation-->
-    <string name="lister_tous_les_animaux">List all</string>
-    <string name="lister_animaux_par_nom">List by name</string>
-    <string name="ajouter_un_nouvel_animal">Add new animal</string>
-    <string name="supprimer_un_animal">Delete animal</string>
-    <string name="action_settings">Paramètres</string>
+    <!-- Navigation drawer menu items -->
+    <string name="nav_lister_films">Lister tous les films</string>
+    <string name="nav_ajouter_film">Ajouter un nouveau film</string>
+    <string name="nav_supprimer_film">Supprimer un film</string>
+    <string name="nav_parametres">Paramètres</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
 
-    <!--    ActionBarDrawerToggle-->
-    <string name="open">True</string>
-    <string name="close">False</string>
-
-    <!--    Boutton retour pour ListerActivity-->
+    <!-- Bouton retour -->
     <string name="boutton_retour">Retour</string>
+
+    <!-- Placeholder strings -->
+    <string name="film_id">ID</string>
+    <string name="film_titre">Titre</string>
+    <string name="film_langue">Langue</string>
+    <string name="film_etoiles">Étoiles</string>
+
+    <!-- Add any other strings you need here -->
 </resources>

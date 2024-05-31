@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import edu.android.animauxlabo2elie.model.Animal;
+import edu.android.animauxlabo2elie.model.Film;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,37 +26,36 @@ public class ListerActivity extends AppCompatActivity {
 
         buttonReturn.setOnClickListener(v -> {
             Intent intent = new Intent(ListerActivity.this, MainActivity.class);
-
             startActivity(intent);
         });
 
-        ArrayList<Animal> listeAnimaux = new ArrayList<>();
-        String animalName = getIntent().getStringExtra("animalName");
+        ArrayList<Film> filmList = new ArrayList<>();
+        String filmTitle = getIntent().getStringExtra("filmTitle");
 
         try {
-            BufferedReader lire = new BufferedReader(new InputStreamReader(getAssets().open("animaux.txt")));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets().open("animaux.txt")));
 
-            lire.readLine(); // On ignore la première ligne
+            reader.readLine(); // On ignore la première ligne
 
-            String[] donnee;
-            String ligne = lire.readLine();
-            while (ligne != null) {
-                donnee = ligne.split(";");
-                listeAnimaux.add(new Animal(Integer.parseInt(donnee[0]), donnee[1], donnee[2], Integer.parseInt(donnee[3]), donnee[4], donnee[5]));
-                ligne = lire.readLine();
+            String[] data;
+            String line = reader.readLine();
+            while (line != null) {
+                data = line.split(";");
+                filmList.add(new Film(Integer.parseInt(data[0]), data[1], data[2], Integer.parseInt(data[3])));
+                line = reader.readLine();
             }
-            lire.close();
+            reader.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        ArrayList<Animal> filteredAnimals = (ArrayList<Animal>) listeAnimaux.stream()
-                .filter(animal -> animal.getNom().equals(animalName))
+        ArrayList<Film> filteredFilms = (ArrayList<Film>) filmList.stream()
+                .filter(film -> film.getTitre().equals(filmTitle))
                 .collect(Collectors.toList());
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        AnimalAdapter adapter = new AnimalAdapter(filteredAnimals);
+        FilmAdapter adapter = new FilmAdapter(filteredFilms);
         recyclerView.setAdapter(adapter);
     }
 }

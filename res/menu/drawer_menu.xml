@@ -1,23 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-
-    >
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/nav_lister_animaux"
+        android:id="@+id/nav_lister_films"
         android:icon="@drawable/list_all"
-        android:title="@string/lister_tous_les_animaux" />
+        android:title="@string/nav_lister_films" />
     <item
-        android:id="@+id/nav_lister_par_nom"
-        android:icon="@drawable/lions"
-        android:title="@string/lister_animaux_par_nom" />
-    <item
-        android:id="@+id/nav_ajouter_animal"
+        android:id="@+id/nav_ajouter_film"
         android:icon="@drawable/add"
-        android:title="@string/ajouter_un_nouvel_animal" />
+        android:title="@string/nav_ajouter_film" />
     <item
-        android:id="@+id/nav_supprimer_animal"
+        android:id="@+id/nav_supprimer_film"
         android:icon="@drawable/delete"
-        android:title="@string/supprimer_un_animal" />
+        android:title="@string/nav_supprimer_film" />
+    <item
+        android:id="@+id/nav_parametres"
+        android:title="@string/nav_parametres" />
+
 </menu>
